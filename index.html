@@ -29,7 +29,7 @@
             <button class="default-button" type="button">Buscar</button>
         </section>
         <section class="filter-section">
-            <button type="button">Desplegar</button>
+            <button class="default-button" type="button">Desplegar</button>
         </section>
         <section class="table-section">
             <table class="table">
@@ -73,7 +73,13 @@
             </table>
         </section>
         <div class="floating-button">
-            <button class="default-button" type="button">Agregar</button>
+            <button class="default-button" type="button" id="task_button">Agregar</button>
+            <dialog id="modal">
+                <h2>Este es el modal para agregar una tarea</h2>
+                <p>¿Estás seguro que deseas agregar una tarea?</p>
+                <button id="cancel_button" class="default-button">Cancelar</button>
+                <button class="default-button">Agregar</button>
+            </dialog>
         </div>
     </main>
     <footer class="footer">© 2026 Todo App. Todos los derechos reservados.</footer>
