@@ -38,7 +38,7 @@ html {
 }
 
 body {
-    min-height: 100vh;
+    min-height: 100dvh;
     font-family: var(--primary-font-family);
     font-size: 1.6rem;
     display: flex;
@@ -86,7 +86,8 @@ body {
 /* MAIN: SEARCH-BAR */
 
 .main {
-    flex-grow: 1;
+    flex: 1;
+    min-height: 0;
     position: relative;
     padding: var(--default-spacing);
 }
