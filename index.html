@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Asap+Sharp:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./build/css/app.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-datetime">
+            <p class="time">10:00</p>
+            <p class="date">Martes 01 de septiembre, 2026</p>
+        </div>
+        <div class="header-kpis">
+            <p>5 tareas por completar</p>
+            <p>3 tareas de hoy</p>
+        </div>
+    </header>
+    <main class="main">
+        <section class="search-bar-section">
+            <input class="search-bar" id="search_bar" type="text" placeholder="Buscar una tarea">
+            <button class="default-button" type="button">Buscar</button>
+        </section>
+        <section class="filter-section">
+            <button type="button">Desplegar</button>
+        </section>
+        <section class="table-section">
+            <table class="table">
+                <caption class="visually-hidden">Tabla de tareas por hacer</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Título</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Categoría</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Fecha de creación</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                    </tr>
+                    <tr>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                    </tr>
+                    <tr>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                        <td>Valor</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <div class="floating-button">
+            <button class="default-button" type="button">Agregar</button>
+        </div>
+    </main>
+    <footer class="footer">© 2026 Todo App. Todos los derechos reservados.</footer>
+    <script type="module" src="./build/js/app.js"></script>
+</body>
+
+</html>
