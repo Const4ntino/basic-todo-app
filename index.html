@@ -74,11 +74,20 @@
         </section>
         <div class="floating-button">
             <button class="default-button" type="button" id="task_button">Agregar</button>
-            <dialog id="modal">
-                <h2>Este es el modal para agregar una tarea</h2>
-                <p>¿Estás seguro que deseas agregar una tarea?</p>
-                <button id="cancel_button" class="default-button">Cancelar</button>
-                <button class="default-button">Agregar</button>
+            <dialog id="modal" aria-labelledby="modal_title" aria-describedby="modal_description">
+                <div class="dialog-layout">
+                    <header>
+                        <h2 id="modal_title">Este es el modal para agregar una tarea</h2>
+                    </header>
+
+                    <body>
+                        <p id="modal_description">¿Estás seguro que deseas agregar una tarea?</p>
+                    </body>
+                    <footer>
+                        <button id="cancel_button" class="default-button">Cancelar</button>
+                        <button class="default-button">Agregar</button>
+                    </footer>
+                </div>
             </dialog>
         </div>
     </main>
