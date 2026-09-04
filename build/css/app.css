@@ -5,7 +5,7 @@
     --xl-spacing: 2rem;
     --xxl-spacing: 2.5rem;
 
-    --default-font-size: 1.8rem;
+    --default-font-size: 1.6rem;
     --large-font-size: 2.2rem;
     --xl-font-size: 4rem;
     --xxl-font-size: 7rem;
@@ -106,9 +106,20 @@ body {
     min-width: 0;
     border: .1rem solid var(--grey-intense);
     font-family: var(--primary-font-family);
-    font-size: 1.6rem;
+    font-size: var(--default-font-size);
     padding: 0 var(--default-spacing);
 }
+
+.search-bar:focus {
+    outline: .5rem solid var(--grey-intense-rgb);
+    outline-offset: .2rem;
+}
+
+.search-bar:focus-visible {
+    outline: .5rem solid var(--grey-intense-rgb);
+    outline-offset: .2rem;
+}
+
 
 /* MAIN: FILTER */
 
@@ -117,6 +128,49 @@ body {
     max-width: 50rem;
     margin: 0 auto;
     padding: var(--default-spacing) 0 0 0;
+}
+
+.filter-section>button {
+    display: block;
+}
+
+.filter-section .filters {
+    border: .1rem solid var(--grey-intense-rgb);
+
+    width: fit-content;
+    padding: var(--default-spacing) var(--default-spacing) 0;
+    margin: 0 auto;
+
+    display: none;
+    opacity: 0;
+    transform: translateY(-100%);
+    flex-direction: column;
+    gap: var(--default-spacing);
+    justify-content: center;
+    align-items: center;
+
+    transition: transform .2s ease, opacity .2s ease, display .2s allow-discrete;
+}
+
+.filter-section .filters.open {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@starting-style {
+    .filter-section .filters.open {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+}
+
+.filter {
+    width: 100%;
+    display: flex;
+    gap: var(--default-spacing);
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* MAIN: TABLE */
@@ -164,14 +218,7 @@ dialog {
     padding: var(--xl-spacing);
     border: none;
     border-radius: var(--default-rounded-corner);
-
     transition: opacity .2s ease, transform .2s ease;
-}
-
-.dialog-layout {
-    display: flex;
-    flex-direction: column;
-    gap: var(--default-spacing);
 }
 
 dialog::backdrop {
@@ -189,6 +236,17 @@ dialog[open] {
         opacity: 0;
         transform: scale(.95);
     }
+}
+
+dialog.closing {
+    opacity: 0;
+    transform: scale(.95);
+}
+
+.dialog-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--default-spacing);
 }
 
 /* FOOTER */
@@ -224,4 +282,13 @@ dialog[open] {
 .default-button:focus {
     outline: .5rem solid var(--grey-intense-rgb);
     outline-offset: .2rem;
+}
+
+.default-select {
+    cursor: pointer;
+    padding: var(--default-spacing);
+    background-color: var(--grey);
+    border: .1rem solid var(--grey-intense-rgb);
+    font-family: var(--primary-font-family);
+    font-size: var(--default-font-size);
 }

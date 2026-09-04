@@ -1,4 +1,4 @@
-import { barSearchBehavior, modalBehavior } from './modules/functions.js';
+import { barSearchBehavior, filterButtonBehavior, modalBehavior } from './modules/functions.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const search_bar = document.getElementById('search_bar');
@@ -8,4 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('modal');
     const cancel_button = document.getElementById('cancel_button');
     modalBehavior(task_button, modal, cancel_button);
+
+    const filter_button = document.getElementById('filter_button');
+    const filter_container = document.getElementById('filter_container');
+    filterButtonBehavior(filter_button, filter_container);
 });

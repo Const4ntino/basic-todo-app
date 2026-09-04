@@ -29,7 +29,33 @@
             <button class="default-button" type="button">Buscar</button>
         </section>
         <section class="filter-section">
-            <button class="default-button" type="button">Desplegar</button>
+            <button id="filter_button" class="default-button" type="button">Desplegar</button>
+            <div id="filter_container" class="filters">
+                <div class="filter">
+                    <label for="category_filter">Categoría</label>
+                    <select class="default-select" name="categoria" id="category_filter">
+                        <option class="default-select-option" value="" selected disabled>Seleccionar</option>
+                        <option class="default-select-option" value="urgente">Urgente</option>
+                        <option class="default-select-option" value="normal">Normal</option>
+                    </select>
+                </div>
+                <div class="filter">
+                    <label for="state_filter">Estado</label>
+                    <select class="default-select" name="estado" id="state_filter">
+                        <option class="default-select-option" value="" selected disabled>Seleccionar</option>
+                        <option class="default-select-option" value="completada">Completadas</option>
+                        <option class="default-select-option" value="pendiente">Pendientes</option>
+                    </select>
+                </div>
+                <div class="filter">
+                    <label for="date_filter">Fecha</label>
+                    <select class="default-select" name="fecha" id="date_filter">
+                        <option class="default-select-option" value="" selected disabled>Seleccionar</option>
+                        <option class="default-select-option" value="ascendente">Ascendente</option>
+                        <option class="default-select-option" value="descendente">Descendente</option>
+                    </select>
+                </div>
+            </div>
         </section>
         <section class="table-section">
             <table class="table">
