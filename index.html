@@ -29,36 +29,41 @@
             <button class="default-button" type="button">Buscar</button>
         </section>
         <section class="filter-section">
-            <button id="filter_button" class="default-button" type="button">Desplegar</button>
-            <div id="filter_container" class="filters">
-                <div class="filter">
-                    <label for="category_filter">Categoría</label>
-                    <select class="default-select" name="categoria" id="category_filter">
-                        <option class="default-select-option" value="" selected disabled>Seleccionar</option>
-                        <option class="default-select-option" value="urgente">Urgente</option>
-                        <option class="default-select-option" value="normal">Normal</option>
-                    </select>
-                </div>
-                <div class="filter">
-                    <label for="state_filter">Estado</label>
-                    <select class="default-select" name="estado" id="state_filter">
-                        <option class="default-select-option" value="" selected disabled>Seleccionar</option>
-                        <option class="default-select-option" value="completada">Completadas</option>
-                        <option class="default-select-option" value="pendiente">Pendientes</option>
-                    </select>
-                </div>
-                <div class="filter">
-                    <label for="date_filter">Fecha</label>
-                    <select class="default-select" name="fecha" id="date_filter">
-                        <option class="default-select-option" value="" selected disabled>Seleccionar</option>
-                        <option class="default-select-option" value="ascendente">Ascendente</option>
-                        <option class="default-select-option" value="descendente">Descendente</option>
-                    </select>
+            <button id="filter_button" class="filter_button default-button" type="button">Desplegar</button>
+            <div>
+                <div id="filter_container" class="filters">
+                    <div class="filter">
+                        <label for="category_filter">Categoría</label>
+                        <select class="default-select" name="categoria" id="category_filter">
+                            <option value="" selected disabled>Seleccionar</option>
+                            <option value="urgente">Urgente</option>
+                            <option value="normal">Normal</option>
+                        </select>
+                    </div>
+                    <div class="filter">
+                        <label for="state_filter">Estado</label>
+                        <select class="default-select" name="estado" id="state_filter">
+                            <option value="" selected disabled>Seleccionar</option>
+                            <option value="completada">Completadas</option>
+                            <option value="pendiente">Pendientes</option>
+                        </select>
+                    </div>
+                    <div class="filter">
+                        <label for="date_filter">Fecha</label>
+                        <select class="default-select" name="fecha" id="date_filter">
+                            <option value="" selected disabled>Seleccionar</option>
+                            <option value="ascendente">Ascendente</option>
+                            <option value="descendente">Descendente</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </section>
-        <section class="table-section">
-            <table class="table">
+        <hr>
+        <section class="task-list-section">
+            <h2>Lista de tareas</h2>
+            <div id="task_list" class="task-list"></div>
+            <!-- <table id="table" class="table">
                 <caption class="visually-hidden">Tabla de tareas por hacer</caption>
                 <thead>
                     <tr>
@@ -71,54 +76,54 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                    </tr>
-                    <tr>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                    </tr>
-                    <tr>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                        <td>Valor</td>
-                    </tr>
                 </tbody>
-            </table>
+            </table> -->
         </section>
         <div class="floating-button">
             <button class="default-button" type="button" id="task_button">Agregar</button>
             <dialog id="modal" aria-labelledby="modal_title" aria-describedby="modal_description">
-                <div class="dialog-layout">
+                <form action="POST" class="form-modal" id="form_modal">
                     <header>
-                        <h2 id="modal_title">Este es el modal para agregar una tarea</h2>
+                        <h2 id="modal_title">Crear una tarea</h2>
+                        <p id="modal_description" class="visually-hidden">En este formulario se puede registrar una
+                            tarea, complentando cada uno de los registros.</p>
+                        <button id="close_button" class="default-button" type="button"
+                            aria-label="Cerrar">&times;</button>
                     </header>
-
-                    <body>
-                        <p id="modal_description">¿Estás seguro que deseas agregar una tarea?</p>
-                    </body>
+                    <div class="form-body">
+                        <div class="form-modal-field">
+                            <label for="title">Título:</label>
+                            <input id="title" class="input-form-modal" name="titulo" type="text" required>
+                        </div>
+                        <div class="form-modal-field">
+                            <label for="description">Descripción:</label>
+                            <input id="description" class="input-form-modal" name="descripcion" type="text">
+                        </div>
+                        <div class="form-modal-field">
+                            <label for="category">Categoría:</label>
+                            <select name="categoria" id="category" class="default-select">
+                                <option value="normal">Normal</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
+                        </div>
+                        <div class="form-modal-field">
+                            <label for="state">Estado:</label>
+                            <select name="estado" id="state" class="default-select">
+                                <option value="pendiente">Pendiente</option>
+                                <option value="completada">Completada</option>
+                            </select>
+                        </div>
+                    </div>
                     <footer>
-                        <button id="cancel_button" class="default-button">Cancelar</button>
-                        <button class="default-button">Agregar</button>
+                        <button id="cancel_button" type="button" class="default-button">Cancelar</button>
+                        <button type="submit" class="default-button">Agregar</button>
                     </footer>
-                </div>
+                </form>
             </dialog>
         </div>
     </main>
     <footer class="footer">© 2026 Todo App. Todos los derechos reservados.</footer>
-    <script type="module" src="./build/js/app.js"></script>
+    <script type="module" src="./build/js/main.js"></script>
 </body>
 
 </html>
