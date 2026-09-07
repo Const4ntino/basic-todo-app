@@ -94,12 +94,17 @@ body {
 .main {
     flex: 1;
     min-height: 0;
+    overflow-y: auto;
 
-    position: relative;
     padding: var(--default-spacing);
-
     display: flex;
     flex-direction: column;
+}
+
+@media (min-width: 768px) {
+    .main {
+        overflow-y: unset;
+    }
 }
 
 .search-bar-section {
@@ -167,6 +172,9 @@ body {
 .filter-section .filters {
     width: fit-content;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--default-spacing);
 }
 
 .filter-section>div.open {
@@ -213,11 +221,17 @@ hr {
 }
 
 .task-list {
-    overflow-y: auto;
-
     display: grid;
     grid-template-columns: minmax(auto, 50rem);
     gap: var(--default-spacing);
+    padding: 0 0 7rem 0;
+}
+
+@media (min-width: 768px) {
+    .task-list {
+        overflow-y: auto;
+        padding: 0;
+    }
 }
 
 .task {
@@ -316,9 +330,9 @@ span.normal {
 
 .floating-button {
     margin: var(--default-spacing);
-    position: absolute;
-    right: 0;
-    bottom: 0;
+    position: fixed;
+    right: 1rem;
+    bottom: 4rem;
 }
 
 dialog {
