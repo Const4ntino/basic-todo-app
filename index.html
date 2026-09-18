@@ -29,13 +29,14 @@
             <button class="default-button" type="button">Buscar</button>
         </section>
         <section class="filter-section">
+            <div id="selected_filters" class="selected-filters"></div>
             <button id="filter_button" class="filter_button default-button" type="button">Desplegar</button>
-            <div>
+            <div id="filters_box" class="filters-box">
                 <div id="filter_container" class="filters">
                     <div class="filter">
                         <label for="category_filter">Categoría</label>
                         <select class="default-select" name="categoria" id="category_filter">
-                            <option value="" selected disabled>Seleccionar</option>
+                            <option value="all" selected>Todas</option>
                             <option value="urgente">Urgente</option>
                             <option value="normal">Normal</option>
                         </select>
@@ -43,17 +44,17 @@
                     <div class="filter">
                         <label for="state_filter">Estado</label>
                         <select class="default-select" name="estado" id="state_filter">
-                            <option value="" selected disabled>Seleccionar</option>
-                            <option value="completada">Completadas</option>
+                            <option value="all" selected>Todos</option>
                             <option value="pendiente">Pendientes</option>
+                            <option value="procesando">En proceso</option>
+                            <option value="completada">Completadas</option>
                         </select>
                     </div>
                     <div class="filter">
                         <label for="date_filter">Fecha</label>
                         <select class="default-select" name="fecha" id="date_filter">
-                            <option value="" selected disabled>Seleccionar</option>
+                            <option value="descendente" selected>Descendente</option>
                             <option value="ascendente">Ascendente</option>
-                            <option value="descendente">Descendente</option>
                         </select>
                     </div>
                 </div>
@@ -82,7 +83,7 @@
         <div class="floating-button">
             <button class="default-button" type="button" id="task_button">Agregar</button>
             <dialog id="modal" aria-labelledby="modal_title" aria-describedby="modal_description">
-                <form action="POST" class="form-modal" id="form_modal">
+                <form class="form-modal" id="form_modal">
                     <header>
                         <h2 id="modal_title">Crear una tarea</h2>
                         <p id="modal_description" class="visually-hidden">En este formulario se puede registrar una
@@ -110,6 +111,7 @@
                             <label for="state">Estado:</label>
                             <select name="estado" id="state" class="default-select">
                                 <option value="pendiente">Pendiente</option>
+                                <option value="procesando">En proceso</option>
                                 <option value="completada">Completada</option>
                             </select>
                         </div>
