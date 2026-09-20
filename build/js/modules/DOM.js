@@ -17,6 +17,7 @@ export default function loadDOM() {
     const selected_filters = document.getElementById('selected_filters');
     loadSelectedFilters(selected_filters, category_filter, state_filter, date_filter);
 
+    loadFilterValues(); // cargar opciones seleccionadas en los filtros
     const filter_button = document.getElementById('filter_button');
     const filter_container = document.getElementById('filters_box');
     filtersBehavior(filter_button, filter_container, category_filter, state_filter, date_filter, selected_filters);
@@ -58,7 +59,6 @@ function loadSelectedFilters(selected_filters, category_filter, state_filter, da
     if (Object.keys(filters).length === 0) return;
 
     if (filters.categoria !== 'all') {
-
         appendSelectedFilter(selected_filters, 'categoria', filters.categoria, category_filter);
     }
 
@@ -71,11 +71,36 @@ function loadSelectedFilters(selected_filters, category_filter, state_filter, da
     }
 }
 
-function appendSelectedFilter(selected_filters, key, value, filter) {
-    const selected_exist = document.getElementById(`${key}_selected`);
+function loadFilterValues() {
+    const category_filter = document.getElementById('category_filter');
+    const state_filter = document.getElementById('state_filter');
+    const date_filter = document.getElementById('date_filter');
 
-    if (value === 'all' && selected_exist || value == 'descendente' && selected_exist) { // si el valor es 'all', 'descendiente' y el filtro seleccionado existe, entonces se elimina
-        selected_exist.remove();
+    // filtros iniciales
+    const filters = getFilters();
+
+    if (Object.keys(filters).length === 0) {
+        const defaultFilters = {
+            categoria: 'all',
+            estado: 'all',
+            fecha: 'descendente',
+        }
+        updateFilters(defaultFilters);
+    }
+
+    // filtros actuales
+    const currentfilters = getFilters();
+
+    category_filter.value = currentfilters.categoria; // seleccionar valor inicial de cada select o actualizarlo
+    state_filter.value = currentfilters.estado;
+    date_filter.value = currentfilters.fecha;
+}
+
+function appendSelectedFilter(selected_filters, key, value, filter) {
+    const selected_exists = document.getElementById(`${key}_selected`);
+
+    if (value === 'all' && selected_exists || value == 'descendente' && selected_exists) { // si el valor es 'all', 'descendiente' y el filtro seleccionado existe, entonces se elimina
+        selected_exists.remove();
         return;
     }
 
@@ -89,8 +114,9 @@ function appendSelectedFilter(selected_filters, key, value, filter) {
 
     value = mapped_values.get(value);
 
-    if (selected_exist) { // si existe el filtro seleccionado entonces solo modificar su textContent
-        const textFilter = document.querySelector(`#${selected_exist.id} p`);
+    if (selected_exists) { // si existe el filtro seleccionado entonces solo modificar su textContent
+        console.log(`ya existe el selector: ${key}_selected`);
+        const textFilter = document.querySelector(`#${selected_exists.id} p`);
         textFilter.textContent = `${key[0].toUpperCase() + key.substring(1)}: ${value}`;
         return;
     }
@@ -115,37 +141,53 @@ function appendSelectedFilter(selected_filters, key, value, filter) {
         filter_div.remove();
         filter.value = (key === 'fecha') ? 'descendente' : 'all';
         loadTaskList();
+
+        // eliminar botón de limpiar filtros si no hay filtros seleccionados
+        if (selected_filters.children.length === 0) {
+            const clear_button = document.getElementById('clear_button');
+            clear_button.remove();
+        }
     });
 
     filter_div.appendChild(filter_span);
     filter_div.appendChild(close_button);
 
     selected_filters.appendChild(filter_div);
+
+    clearFiltersButtonHandling(selected_filters); // manipulación del botón de limpiar filtros
+}
+
+function clearFiltersButtonHandling(selected_filters) {
+    // Manipulación del botón de limpiar filtros
+    const clear_button_exists = document.getElementById('clear_button');
+    if (clear_button_exists) return;
+    const selected_filters_container = document.getElementById('selected_filters_container'); // su parent container
+
+    const clear_button = document.createElement('BUTTON');
+    clear_button.id = 'clear_button';
+    clear_button.classList.add('default-button');
+    clear_button.textContent = 'Limpiar filtros';
+
+    clear_button.addEventListener('click', function () {
+        const defaultFilters = {
+            categoria: 'all',
+            estado: 'all',
+            fecha: 'descendente',
+        }
+        updateFilters(defaultFilters);
+        selected_filters.textContent = ''; // eliminar todos los selected filters de su contenedor
+        clear_button.remove();
+        loadFilterValues();
+        loadTaskList();
+    });
+
+    selected_filters_container.appendChild(clear_button);
 }
 
 function filtersBehavior(filter_button, filter_container, category_filter, state_filter, date_filter, selected_filters) {
     filter_button.addEventListener('pointerdown', () => {
         filter_container.classList.toggle('open');
     });
-
-    // filtros iniciales
-    const filters = getFilters();
-
-    if (Object.keys(filters).length === 0) {
-        const defaultFilters = {
-            categoria: 'all',
-            estado: 'all',
-            fecha: 'descendente',
-        }
-        localStorage.setItem('filters', JSON.stringify(defaultFilters));
-    }
-
-    // filtros actuales
-    const currentfilters = getFilters();
-
-    category_filter.value = currentfilters.categoria; // seleccionar valor inicial de cada select
-    state_filter.value = currentfilters.estado;
-    date_filter.value = currentfilters.fecha;
 
     category_filter.addEventListener('change', () => {
         const filters = getFilters();
