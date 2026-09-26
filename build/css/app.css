@@ -187,6 +187,12 @@ body {
     justify-content: center;
 }
 
+.selected-filters-container .clear-button {
+    display: inline-flex;
+    gap: var(--default-spacing);
+    align-items: center;
+}
+
 .filter-section>button {
     display: block;
     width: fit-content;
@@ -360,9 +366,10 @@ span.completada {
 }
 
 .task-buttons {
-    grid-row: span 2;
+    /* grid-row: span 2; */
+    position: relative;
+    height: min-content;
     display: flex;
-    flex-direction: column;
     gap: var(--small-spacing);
 }
 
@@ -495,6 +502,70 @@ dialog.closing {
     gap: var(--default-spacing);
 }
 
+/* MAIN: POPOVER DIV */
+
+.popover-list-button {
+    padding: var(--default-spacing);
+    border: none;
+    width: 100%;
+
+    font-family: var(--primary-font-family);
+    background-color: white;
+
+    display: inline-flex;
+    gap: var(--default-spacing);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.popover-list-button:hover {
+    background-color: var(--grey);
+}
+
+[popover] {
+    border: none;
+    border-radius: var(--default-rounded-corner);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: none;
+    opacity: 0;
+    transition: opacity ease-in-out .2s, display .2s allow-discrete, overlay .2s allow-discrete;
+}
+
+[popover]:popover-open {
+    display: flex;
+    opacity: 1;
+}
+
+@starting-style {
+    [popover]:popover-open {
+        opacity: 0;
+    }
+}
+
+/* MAIN: MODAL 2 */
+
+.modal-2>div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--default-spacing);
+}
+
+.modal-2-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-2-header button {
+    height: 100%;
+    aspect-ratio: 1;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
 /* FOOTER */
 
 .footer {
@@ -537,4 +608,14 @@ dialog.closing {
     border: .1rem solid var(--grey-intense-rgb);
     font-family: var(--primary-font-family);
     font-size: var(--default-font-size);
+}
+
+.icon {
+    height: 1lh;
+    aspect-ratio: 1;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }

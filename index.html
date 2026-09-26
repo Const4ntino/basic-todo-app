@@ -1,3 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+    <symbol id="broom" viewBox="0 0 24 24">
+        <path
+            d="M13.5 10.5 22 2m-7.266 11.841a2 2 0 0 0-.314-2.42L12.58 9.58a2 2 0 0 0-2.421-.314l-7.657 4.461A1 1 0 0 0 2.3 15.3l6.403 6.403a1 1 0 0 0 1.571-.204zM5 18l2-2m.699-5.3 5.602 5.601" />
+    </symbol>
+    <symbol id="circle-alert" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 8v4m0 4h.01" />
+    </symbol>
+    <symbol id="eye" viewBox="0 0 24 24">
+        <path
+            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+        <circle cx="12" cy="12" r="3" />
+    </symbol>
+    <symbol id="square-pen" viewBox="0 0 24 24">
+        <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+        <path
+            d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
+    </symbol>
+    <symbol id="trash" viewBox="0 0 24 24">
+        <path d="M10 11v6m4-6v6m5-11v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </symbol>
+</svg>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -15,8 +39,8 @@
 <body>
     <header class="header">
         <div class="header-datetime">
-            <p class="time">10:00</p>
-            <p class="date">Martes 01 de septiembre, 2026</p>
+            <p id="header_time" class="time"></p>
+            <p id="header_date" class="date"></p>
         </div>
         <div class="header-kpis">
             <p>5 tareas por completar</p>
@@ -124,7 +148,54 @@
                     </footer>
                 </form>
             </dialog>
-        </div>
+        </div> <!-- Botón flotante -->
+
+        <div id="menu_opciones" popover="manual">
+            <menu>
+                <li>
+                    <button id="view_button" type="button" class="popover-list-button">
+                        <span>Ver</span>
+                        <svg class="icon">
+                            <use href="#eye">
+                        </svg>
+                    </button>
+                </li>
+                <li>
+                    <button id="edit_button" type="button" class="popover-list-button">
+                        <span>Editar</span>
+                        <svg class="icon">
+                            <use href="#square-pen">
+                        </svg>
+                    </button>
+                </li>
+                <li>
+                    <button id="delete_button" type="button" class="popover-list-button">
+                        <span>Eliminar</span>
+                        <svg class="icon">
+                            <use href="#trash">
+                        </svg>
+                    </button>
+                </li>
+            </menu>
+        </div> <!-- Popover -->
+
+        <dialog id="modal_2" class="modal-2" aria-labelledby="modal_title_2" aria-describedby="modal_description_2">
+            <div>
+                <div class="modal-2-header">
+                    <h2 id="modal_title_2">Eliminar una tarea</h2>
+                    <p id="modal_description_2" class="visually-hidden">En este formulario debes confirmar si deseas
+                        eliminar esta tarea</p>
+                    <button id="close_button_2" class="default-button" type="button"
+                        aria-label="Cerrar">&times;</button>
+                </div>
+                <p>¿Estás seguro(a) que deseas eliminar esta tarea?</p>
+                <div>
+                    <button id="cancel_button_2" type="button" class="default-button">Cancelar</button>
+                    <button id="confirm_button_2" class="default-button">Confirmar</button>
+                </div>
+            </div>
+        </dialog> <!-- Confirmación de eliminación -->
+
     </main>
     <footer class="footer">© 2026 Todo App. Todos los derechos reservados.</footer>
     <script type="module" src="./build/js/main.js"></script>

@@ -1,7 +1,11 @@
-import { addTask, getTaskList } from './task.js';
+import { addTask, deleteTask, getTaskList } from './task.js';
 import { getFilters, updateFilters } from './filters.js';
 
 export default function loadDOM() {
+    const header_time = document.getElementById('header_time');
+    const header_date = document.getElementById('header_date');
+    datetimeBehavior(header_time, header_date);
+
     const search_bar = document.getElementById('search_bar');
     barSearchBehavior(search_bar);
 
@@ -10,6 +14,7 @@ export default function loadDOM() {
     const close_button = document.getElementById('close_button');
     const cancel_button = document.getElementById('cancel_button');
     modalBehavior(task_button, modal, close_button, cancel_button);
+
 
     const category_filter = document.getElementById('category_filter');
     const state_filter = document.getElementById('state_filter');
@@ -23,9 +28,66 @@ export default function loadDOM() {
     filtersBehavior(filter_button, filter_container, category_filter, state_filter, date_filter, selected_filters);
 
     loadTaskList(); // carga de lista de tareas respectando filtros
+    // delegación de eventos para manipular los popover, listener de los botones de ver, editar y eliminar con sus dialog
+    taskListBehavior();
 
     const form = document.getElementById('form_modal');
     formBehavior(form, task_list);
+}
+
+function datetimeBehavior(header_time, header_date) {
+    const timeFormatter = new Intl.DateTimeFormat('es-PE', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
+    const dateFormatter = new Intl.DateTimeFormat('es-PE', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+
+    let currentDate = null;
+    let timerId = null;
+
+    function updateDatetime() {
+        const now = new Date();
+        header_time.textContent = timeFormatter.format(now);
+
+        const date = now.getDate();
+        if (date !== currentDate) {
+            const date_str = dateFormatter.format(now);
+            header_date.textContent = date_str.charAt(0).toUpperCase() + date_str.slice(1);
+            currentDate = date;
+        }
+    }
+
+    function start() {
+        if (!timerId) {
+            updateDatetime();
+            timerId = setInterval(updateDatetime, 1000);
+        }
+    }
+
+    function stop() {
+        if (timerId) {
+            clearInterval(timerId);
+            timerId = null;
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stop();
+        } else {
+            start();
+        }
+    })
+
+    start();
+    return stop;
 }
 
 function barSearchBehavior(input) {
@@ -51,7 +113,6 @@ function modalBehavior(open_button, modal, close_button, cancel_button) {
         e.preventDefault();
         closeWithTransition(modal);
     });
-
 }
 
 function loadSelectedFilters(selected_filters, category_filter, state_filter, date_filter) {
@@ -166,7 +227,12 @@ function clearFiltersButtonHandling(selected_filters) {
     const clear_button = document.createElement('BUTTON');
     clear_button.id = 'clear_button';
     clear_button.classList.add('default-button');
-    clear_button.textContent = 'Limpiar filtros';
+    clear_button.classList.add('clear-button');
+
+    const button_description = document.createElement('SPAN');
+    button_description.textContent = 'Limpiar filtros';
+    clear_button.appendChild(button_description);
+    insertSvgIcon(clear_button, 'broom');
 
     clear_button.addEventListener('click', function () {
         const defaultFilters = {
@@ -257,7 +323,7 @@ function loadTaskList() {
         tasks = tasks.toSorted((a, b) => a.fecha - b.fecha);
     }
 
-    if (tasks.length > 0) task_list.textContent = ''; // limpiar lista de tareas
+    task_list.textContent = ''; // limpiar lista de tareas
 
     for (const task of tasks) {
         const task_div = document.createElement('ARTICLE');
@@ -325,24 +391,63 @@ function loadTaskList() {
         const task_buttons = document.createElement('DIV');
         task_buttons.classList.add('task-buttons');
 
-        const viewButton = document.createElement('BUTTON');
-        viewButton.classList.add('default-button');
-        viewButton.textContent = 'Ver';
-        task_buttons.appendChild(viewButton);
-        const editButton = document.createElement('BUTTON');
-        editButton.classList.add('default-button');
-        editButton.textContent = 'Editar';
-        task_buttons.appendChild(editButton);
-        const deleteButton = document.createElement('BUTTON');
-        deleteButton.classList.add('default-button');
-        deleteButton.textContent = 'Eliminar';
-        task_buttons.appendChild(deleteButton);
+        const popoverButton = document.createElement('BUTTON');
+        popoverButton.classList.add('default-button');
+        popoverButton.setAttribute('data-menu-btn', ''); // se usa un atributo para evitar usar clases (es mejor dejar las clases para los estilos)
+        popoverButton.setAttribute('data-task-id', task.id ?? '');
+        popoverButton.textContent = '⋮';
+
+        task_buttons.appendChild(popoverButton);
 
         task_div.appendChild(task_buttons);
 
         // agregar tarea a la lista de tareas
         task_list.appendChild(task_div);
     }
+}
+
+function taskListBehavior() {
+    const popover = document.getElementById('menu_opciones');
+    let currentButton = null;
+
+    document.addEventListener('click', function (e) {
+        const buttonFound = e.target.closest('[data-menu-btn]');
+        if (!buttonFound) {
+            if (!e.target.closest('#menu_opciones')) {
+                popover.hidePopover();
+            }
+            return;
+        }
+
+        const popoverIsOpen = popover.matches(':popover-open');
+        if (popoverIsOpen && currentButton === buttonFound) {
+            popover.hidePopover();
+            return;
+        }
+
+        currentButton = buttonFound;
+        popover.dataset.taskId = currentButton.dataset.taskId;
+        const r = currentButton.getBoundingClientRect();
+        if (!popoverIsOpen) popover.showPopover();
+        popover.style.margin = '0';
+        popover.style.inset = 'auto';
+        popover.style.top = `${r.bottom + 10}px`;
+        popover.style.left = `${r.right - popover.offsetWidth}px`;
+    });
+
+    // Modal para eliminiae
+    const delete_button = document.getElementById('delete_button');
+    const modal_2 = document.getElementById('modal_2');
+    const close_button_2 = document.getElementById('close_button_2');
+    const cancel_button_2 = document.getElementById('cancel_button_2');
+    modalBehavior(delete_button, modal_2, close_button_2, cancel_button_2);
+
+    const confirm_button_2 = document.getElementById('confirm_button_2');
+    confirm_button_2.addEventListener('click', () => {
+        deleteTask(popover.dataset.taskId);
+        loadTaskList();
+        closeWithTransition(modal_2);
+    })
 }
 
 function formBehavior(form) {
@@ -357,7 +462,7 @@ function formBehavior(form) {
             categoria: datos.get('categoria'),
             estado: datos.get('estado')
         });
-        loadTaskList(task_list); // cargar lista de datos
+        loadTaskList(); // cargar lista de datos
         closeWithTransition(modal);
         form.reset(); // resetear campos del formulario
     });
@@ -375,4 +480,8 @@ function closeWithTransition(modal) {
         modal.classList.remove('closing');
         modal.close();
     }, { once: true });
+}
+
+function insertSvgIcon(container, iconId) {
+    container.insertAdjacentHTML('beforeend', `<svg class="icon"><use href="#${iconId}"></svg>`);
 }
