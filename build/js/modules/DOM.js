@@ -1,13 +1,16 @@
 import { addTask, editTask, deleteTask, getTaskList, getTask } from './task.js';
 import { getFilters, updateFilters } from './filters.js';
 
+let searchQuery = ''; // texto de búsqueda actual (efímero, no se guarda en localStorage)
+
 export default function loadDOM() {
     const header_time = document.getElementById('header_time');
     const header_date = document.getElementById('header_date');
     datetimeBehavior(header_time, header_date);
 
     const search_bar = document.getElementById('search_bar');
-    barSearchBehavior(search_bar);
+    const search_button = document.getElementById('search_button');
+    barSearchBehavior(search_bar, search_button);
 
     const task_button = document.getElementById('task_button');
     const modal = document.getElementById('modal');
@@ -91,8 +94,32 @@ function datetimeBehavior(header_time, header_date) {
     return stop;
 }
 
-function barSearchBehavior(input) {
-    input.addEventListener('keydown', preventDefaultFunction);  
+function barSearchBehavior(input, search_button) {
+    const SEARCH_DELAY_MS = 200;
+    let debounceId = null;
+
+    function applySearch() {
+        clearTimeout(debounceId);
+        searchQuery = input.value.trim();
+        loadTaskList();
+    }
+
+    input.addEventListener('input', () => {
+        clearTimeout(debounceId);
+        debounceId = setTimeout(applySearch, SEARCH_DELAY_MS);
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // evita envíos accidentales
+            applySearch();
+        } else if (e.key === 'Escape') {
+            input.value = '';
+            applySearch();
+        }
+    });
+
+    search_button.addEventListener('click', applySearch);
 }
 
 function modalBehavior(open_button, modal, modal_title, close_button, cancel_button, main_button) {
@@ -360,23 +387,17 @@ function loadTaskList() {
     const currentFilters = getFilters(); // cargar filtros actuales de localStorage
 
     if (currentFilters.categoria !== 'all') {
-        const taskFound = tasks.filter((task) => task.categoria === currentFilters.categoria);
-        if (taskFound.length === 0) {
-            task_list.textContent = '';
-            return;
-        } else {
-            tasks = tasks.filter((task) => task.categoria === currentFilters.categoria);
-        }
+        tasks = tasks.filter((task) => task.categoria === currentFilters.categoria);
     }
 
     if (currentFilters.estado !== 'all') {
-        const taskFound = tasks.filter((task) => task.estado === currentFilters.estado);
-        if (taskFound.length === 0) {
-            task_list.textContent = '';
-            return;
-        } else {
-            tasks = tasks.filter((task) => task.estado === currentFilters.estado);
-        }
+        tasks = tasks.filter((task) => task.estado === currentFilters.estado);
+    }
+
+    // Búsqueda por texto (título y descripción), combinada con los filtros
+    const term = normalizeText(searchQuery);
+    if (term) {
+        tasks = tasks.filter((task) => normalizeText(`${task.titulo} ${task.descripcion}`).includes(term));
     }
 
     if (currentFilters.fecha === 'descendente') {
@@ -386,6 +407,20 @@ function loadTaskList() {
     }
 
     task_list.textContent = ''; // limpiar lista de tareas
+
+    if (tasks.length === 0) {
+        const empty_state = document.createElement('P');
+        empty_state.classList.add('empty-state');
+        if (taskList.length === 0) {
+            empty_state.textContent = 'Aún no hay tareas';
+        } else if (term) {
+            empty_state.textContent = `Sin resultados para «${searchQuery}»`;
+        } else {
+            empty_state.textContent = 'No hay tareas con estos filtros';
+        }
+        task_list.appendChild(empty_state);
+        return;
+    }
 
     for (const task of tasks) {
         const task_div = document.createElement('ARTICLE');
@@ -594,8 +629,11 @@ function formBehavior(form) {
 
 // Utilities functions
 
-function preventDefaultFunction(event) {
-    event.preventDefault();
+function normalizeText(text) {
+    return text
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '') // quitar diacríticos (tildes)
+        .toLowerCase();
 }
 
 function closeWithTransition(modal) {

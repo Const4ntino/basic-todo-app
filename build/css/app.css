@@ -373,6 +373,13 @@ span.completada {
     gap: var(--small-spacing);
 }
 
+.empty-state {
+    padding: var(--xl-spacing) 0;
+    text-align: center;
+    font-size: var(--large-font-size);
+    color: var(--grey-intense);
+}
+
 /* .table-section {
     width: 100%;
     max-width: 80rem;
