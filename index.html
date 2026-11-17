@@ -43,8 +43,8 @@
             <p id="header_date" class="date"></p>
         </div>
         <div class="header-kpis">
-            <p>5 tareas por completar</p>
-            <p>3 tareas de hoy</p>
+            <p id="task_counter">5 tareas por completar</p>
+            <p id="today_task_counter">3 tareas para hoy</p>
         </div>
     </header>
     <main class="main">
@@ -124,7 +124,8 @@
                         </div>
                         <div class="form-modal-field">
                             <label for="description">Descripción:</label>
-                            <input id="description" class="input-form-modal" name="descripcion" type="text">
+                            <!-- <input id="description" class="input-form-modal" name="descripcion" type="text"> -->
+                            <textarea name="descripcion" class="input-form-modal" id="description" rows="5" cols="40" style="resize: none;" placeholder="Puedes detallar la tarea"></textarea>
                         </div>
                         <div class="form-modal-field">
                             <label for="category">Categoría:</label>
@@ -144,10 +145,10 @@
                     </div>
                     <footer>
                         <button id="cancel_button" type="button" class="default-button">Cancelar</button>
-                        <button type="submit" class="default-button">Agregar</button>
+                        <button id="main_button" type="submit" class="default-button">Agregar</button>
                     </footer>
                 </form>
-            </dialog>
+            </dialog> <!-- modal para agregar/editar una tarea -->
         </div> <!-- Botón flotante -->
 
         <div id="menu_opciones" popover="manual">
@@ -188,13 +189,13 @@
                     <button id="close_button_2" class="default-button" type="button"
                         aria-label="Cerrar">&times;</button>
                 </div>
-                <p>¿Estás seguro(a) que deseas eliminar esta tarea?</p>
-                <div>
+                <p id="modal_p_content_2">¿Estás seguro(a) que deseas eliminar esta tarea?</p>
+                <div class="modal-2-footer">
                     <button id="cancel_button_2" type="button" class="default-button">Cancelar</button>
-                    <button id="confirm_button_2" class="default-button">Confirmar</button>
+                    <button id="main_button_2" class="default-button">Confirmar</button>
                 </div>
             </div>
-        </dialog> <!-- Confirmación de eliminación -->
+        </dialog> <!-- Modal de confirmación de eliminación / Modal para visualización de una tarea -->
 
     </main>
     <footer class="footer">© 2026 Todo App. Todos los derechos reservados.</footer>

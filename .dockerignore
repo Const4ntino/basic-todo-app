@@ -1,0 +1,28 @@
+# Version control and tooling
+.git
+.gitignore
+.gitattributes
+.claude
+.vscode
+.idea
+
+# Docs and Docker files (not needed in the nginx image)
+*.md
+Dockerfile
+.dockerignore
+
+# Dependencies and build leftovers
+node_modules
+npm-debug.log*
+*.log
+
+# Environment and secrets
+.env
+.env.*
+
+# OS and editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~

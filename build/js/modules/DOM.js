@@ -1,4 +1,4 @@
-import { addTask, deleteTask, getTaskList } from './task.js';
+import { addTask, editTask, deleteTask, getTaskList, getTask } from './task.js';
 import { getFilters, updateFilters } from './filters.js';
 
 export default function loadDOM() {
@@ -11,10 +11,11 @@ export default function loadDOM() {
 
     const task_button = document.getElementById('task_button');
     const modal = document.getElementById('modal');
+    const modal_title = document.getElementById('modal_title');
     const close_button = document.getElementById('close_button');
     const cancel_button = document.getElementById('cancel_button');
-    modalBehavior(task_button, modal, close_button, cancel_button);
-
+    const main_button = document.getElementById('main_button');
+    modalBehavior(task_button, modal, modal_title, close_button, cancel_button, main_button);
 
     const category_filter = document.getElementById('category_filter');
     const state_filter = document.getElementById('state_filter');
@@ -27,12 +28,12 @@ export default function loadDOM() {
     const filter_container = document.getElementById('filters_box');
     filtersBehavior(filter_button, filter_container, category_filter, state_filter, date_filter, selected_filters);
 
-    loadTaskList(); // carga de lista de tareas respectando filtros
+    loadTaskList(); // carga de lista de tareas respetando filtros
     // delegación de eventos para manipular los popover, listener de los botones de ver, editar y eliminar con sus dialog
     taskListBehavior();
 
     const form = document.getElementById('form_modal');
-    formBehavior(form, task_list);
+    formBehavior(form);
 }
 
 function datetimeBehavior(header_time, header_date) {
@@ -91,18 +92,38 @@ function datetimeBehavior(header_time, header_date) {
 }
 
 function barSearchBehavior(input) {
-    input.addEventListener('keydown', preventDefaultFunction);
+    input.addEventListener('keydown', preventDefaultFunction);  
 }
 
-function modalBehavior(open_button, modal, close_button, cancel_button) {
+function modalBehavior(open_button, modal, modal_title, close_button, cancel_button, main_button) {
     open_button.addEventListener('click', () => {
+        if (open_button.id === "task_button") {
+            modal.removeAttribute('data-task-id');
+            modal.removeAttribute('data-task-date');
+            modal_title.textContent = 'Crear una tarea';
+            main_button.textContent = 'Agregar';
+            cancel_button.textContent = 'Limpiar campos';
+            const form = document.querySelector('#modal > form:first-of-type');
+            form.reset();
+        }
+        if (open_button.id === "delete_button") {
+            modal.setAttribute('data-task-id', '');
+            const modal_p_content_2 = document.getElementById('modal_p_content_2')
+            modal_title.textContent = 'Eliminar una tarea';
+            modal_p_content_2.textContent = '¿Estás seguro(a) que deseas eliminar esta tarea?';
+        }
         modal.showModal();
     });
 
+    const popover = document.getElementById('menu_opciones');
     modal.addEventListener('cancel', (e) => {
         e.preventDefault();
+        const popoverIsOpen = popover.matches(':popover-open');
+        if (popoverIsOpen) {
+            popover.hidePopover();
+        }
         closeWithTransition(modal);
-    })
+    });
 
     close_button.addEventListener('click', (e) => {
         e.preventDefault();
@@ -111,6 +132,11 @@ function modalBehavior(open_button, modal, close_button, cancel_button) {
 
     cancel_button.addEventListener('click', (e) => {
         e.preventDefault();
+        if (!modal.hasAttribute('data-task-id')) {
+            const form = document.querySelector('#modal > form:first-of-type');
+            form.reset();
+            return;
+        }
         closeWithTransition(modal);
     });
 }
@@ -162,6 +188,10 @@ function appendSelectedFilter(selected_filters, key, value, filter) {
 
     if (value === 'all' && selected_exists || value == 'descendente' && selected_exists) { // si el valor es 'all', 'descendiente' y el filtro seleccionado existe, entonces se elimina
         selected_exists.remove();
+        if (selected_filters.children.length === 0) {
+            const clear_button = document.getElementById('clear_button');
+            clear_button.remove();
+        }
         return;
     }
 
@@ -176,7 +206,6 @@ function appendSelectedFilter(selected_filters, key, value, filter) {
     value = mapped_values.get(value);
 
     if (selected_exists) { // si existe el filtro seleccionado entonces solo modificar su textContent
-        console.log(`ya existe el selector: ${key}_selected`);
         const textFilter = document.querySelector(`#${selected_exists.id} p`);
         textFilter.textContent = `${key[0].toUpperCase() + key.substring(1)}: ${value}`;
         return;
@@ -290,12 +319,45 @@ function filtersBehavior(filter_button, filter_container, category_filter, state
 }
 
 function loadTaskList() {
+    const taskList = getTaskList(); // cargar tareas de localstorage
+    let tasks = taskList; // no muta a taskList
+
+    // Carga de KPIs
+
+    const task_counter = document.getElementById('task_counter');
+    const today_task_counter = document.getElementById('today_task_counter');
+
+    const dateFormatter = new Intl.DateTimeFormat('es-PE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    }); // formateador de fecha
+    const today = new Date(); // fecha actual
+    const today_formatted = dateFormatter.format(today);
+
+    const task_count = tasks.reduce((acumulador, tarea) => {
+        const estado = tarea.estado;
+        const fecha = tarea.fecha;
+
+        // Comparación de fecha con la fecha de hoy
+        const task_date_formatted = dateFormatter.format(+fecha);
+        const same_date = today_formatted === task_date_formatted;
+
+        return {
+            ...acumulador,
+            [estado]: (acumulador[estado] || 0) + 1,
+            contador_tareas: (acumulador.contador_tareas || 0) + (+same_date)
+        }
+    }, {});
+
+    task_counter.textContent = `${task_count.pendiente + task_count.procesando} tareas por completar`;
+    today_task_counter.textContent = `${task_count.contador_tareas} tareas para hoy`
+
+    // Carga de lista de tareas
+
     const task_list = document.getElementById('task_list'); // contenedor de la lista de tareas
 
-    const taskList = getTaskList(); // cargar tareas de localstorage
     const currentFilters = getFilters(); // cargar filtros actuales de localStorage
-
-    let tasks = taskList; // no muta a taskList
 
     if (currentFilters.categoria !== 'all') {
         const taskFound = tasks.filter((task) => task.categoria === currentFilters.categoria);
@@ -427,6 +489,7 @@ function taskListBehavior() {
 
         currentButton = buttonFound;
         popover.dataset.taskId = currentButton.dataset.taskId;
+
         const r = currentButton.getBoundingClientRect();
         if (!popoverIsOpen) popover.showPopover();
         popover.style.margin = '0';
@@ -435,19 +498,66 @@ function taskListBehavior() {
         popover.style.left = `${r.right - popover.offsetWidth}px`;
     });
 
-    // Modal para eliminiae
-    const delete_button = document.getElementById('delete_button');
+    const view_button = document.getElementById('view_button');
     const modal_2 = document.getElementById('modal_2');
-    const close_button_2 = document.getElementById('close_button_2');
+    const modal_title_2 = document.getElementById('modal_title_2');
+    const modal_p_content_2 = document.getElementById('modal_p_content_2');
     const cancel_button_2 = document.getElementById('cancel_button_2');
-    modalBehavior(delete_button, modal_2, close_button_2, cancel_button_2);
+    const close_button_2 = document.getElementById('close_button_2');
+    const delete_button = document.getElementById('delete_button');
+    const main_button_2 = document.getElementById('main_button_2');
 
-    const confirm_button_2 = document.getElementById('confirm_button_2');
-    confirm_button_2.addEventListener('click', () => {
+    modalBehavior(delete_button, modal_2, modal_title_2, close_button_2, cancel_button_2, main_button_2);
+
+    view_button.addEventListener('click', () => {
+        modal_2.dataset.taskId = popover.dataset.taskId;
+
+        const task = getTask(modal_2.dataset.taskId);
+        modal_title_2.textContent = task.titulo;
+
+        const dateMs = task.fecha; // formateo de la fecha
+        const date = new Date(dateMs);
+        const formatedDate = date.toLocaleDateString('es-PE');
+
+        modal_p_content_2.innerHTML = `<b>Fecha:</b> ${formatedDate}<br>
+        <b>Categoría:</b> ${task.categoria}<br>
+        <b>Descripción:</b> ${task.descripcion || 'Sin descripción'}<br>
+        <b>Estado:</b> ${task.estado}`;
+
+        modal_2.showModal();
+    });
+
+    // Modal para eliminar
+    modal_2.setAttribute('data-task-id', ''); // parchecito para que no cumpla una condición dentro del listener de cancel_button
+
+    main_button_2.addEventListener('click', () => {
         deleteTask(popover.dataset.taskId);
         loadTaskList();
         closeWithTransition(modal_2);
-    })
+    });
+
+    // Modal reutilizado para editar
+    const edit_button = document.getElementById('edit_button');
+    const modal = document.getElementById('modal');
+    const modal_title = document.getElementById('modal_title');
+    const main_button = document.getElementById('main_button');
+    const cancel_button = document.getElementById('cancel_button');
+    const form = document.getElementById('form_modal');
+
+    edit_button.addEventListener('click', function () {
+        modal.dataset.taskId = popover.dataset.taskId;
+        modal_title.textContent = 'Editar tarea';
+        main_button.textContent = 'Editar';
+        cancel_button.textContent = 'Cancelar';
+
+        const task = getTask(modal.dataset.taskId); // obtener la tarea
+        modal.dataset.taskDate = task.fecha;
+        form.elements.titulo.value = task.titulo;
+        form.elements.descripcion.value = task.descripcion;
+        form.elements.categoria.value = task.categoria;
+        form.elements.estado.value = task.estado;
+        modal.showModal();
+    });
 }
 
 function formBehavior(form) {
@@ -456,6 +566,20 @@ function formBehavior(form) {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const datos = new FormData(form);
+        if (modal.hasAttribute('data-task-id')) {
+            editTask({
+                id: modal.dataset.taskId,
+                fecha: +modal.dataset.taskDate,
+                titulo: datos.get('titulo'),
+                descripcion: datos.get('descripcion'),
+                categoria: datos.get('categoria'),
+                estado: datos.get('estado')
+            });
+            loadTaskList(); // cargar lista de datos
+            closeWithTransition(modal);
+            form.reset(); // resetear campos del formulario
+            return;
+        }
         addTask({
             titulo: datos.get('titulo'),
             descripcion: datos.get('descripcion'),

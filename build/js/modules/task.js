@@ -10,16 +10,32 @@ function addTask(task) {
     localStorage.setItem('tasks', updatedData);
 }
 
+function editTask(task) {
+    const data = loadData();
+
+    const taskIndex = data.findIndex(element => element.id === task.id);
+    console.log(`índice de la tarea: ${taskIndex}`);
+    const updatedData = data.with(taskIndex, task);
+    
+    localStorage.setItem('tasks', JSON.stringify(updatedData));
+}
+
 function deleteTask(taskId) {
     const data = loadData();
     const updatedData = data.filter((task) => task.id !== taskId);
-    
+
     localStorage.setItem('tasks', JSON.stringify(updatedData));
-    console.log('Task ID: ', taskId);
 }
 
 function getTaskList() {
     return loadData();
 }
 
-export { addTask, deleteTask, getTaskList };
+function getTask(taskId) {
+    const data = loadData();
+
+    const task = data.find(task => task.id === taskId);
+    return task;
+}
+
+export { addTask, editTask, deleteTask, getTaskList, getTask };

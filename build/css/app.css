@@ -449,6 +449,7 @@ dialog.closing {
 .form-modal header {
     display: flex;
     justify-content: space-between;
+    gap: var(--default-spacing);
     align-items: center;
 }
 
@@ -479,11 +480,25 @@ dialog.closing {
     gap: var(--default-spacing);
 }
 
+.form-modal-field:first-of-type {
+    justify-content: unset;
+}
+
+.form-modal-field:first-of-type label {
+    flex: 1;
+}
+
+.form-modal-field:first-of-type input {
+    flex: 3.5;
+    min-width: 0;
+}
+
 .input-form-modal {
+    padding: var(--default-spacing);
+
     border: .1rem solid var(--grey-intense);
     font-family: var(--primary-font-family);
     font-size: var(--default-font-size);
-    padding: var(--default-spacing);
 }
 
 .input-form-modal:focus {
@@ -545,6 +560,8 @@ dialog.closing {
 /* MAIN: MODAL 2 */
 
 .modal-2>div {
+    max-width: 46.2rem;
+
     display: flex;
     flex-direction: column;
     gap: var(--default-spacing);
@@ -553,6 +570,7 @@ dialog.closing {
 .modal-2-header {
     display: flex;
     justify-content: space-between;
+    gap: var(--xl-spacing);
 }
 
 .modal-2-header button {
@@ -564,7 +582,11 @@ dialog.closing {
     justify-content: center;
 }
 
-
+.modal-2-footer {
+    display: flex;
+    justify-content: end;
+    gap: var(--default-spacing);
+}
 
 /* FOOTER */
 
